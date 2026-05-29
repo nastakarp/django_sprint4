@@ -146,7 +146,7 @@ dmypy.json
 .mypy_cache
 
 # папки со статикой и медиа
-media/
+blogicum/media/
 
-sent_emails/
+blogicum/sent_emails/
 
