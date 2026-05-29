@@ -2,23 +2,35 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth.forms import UserCreationForm
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
 
-# Импортируем views из приложения blog
-from blog import views
-
-# Обработчики ошибок
-handler404 = 'blog.views.page_not_found'
-handler500 = 'blog.views.server_error'
-handler403 = 'blog.views.csrf_failure'
+# Кастомные обработчики ошибок
+handler404 = 'pages.views.page_not_found'
+handler500 = 'pages.views.server_error'
+CSRF_FAILURE_VIEW = 'pages.views.csrf_failure'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('pages/', include('pages.urls', namespace='pages')),
     path('', include('blog.urls', namespace='blog')),
+    path('pages/', include('pages.urls', namespace='pages')),
+
+    # Авторизация из коробки
     path('auth/', include('django.contrib.auth.urls')),
-    path('auth/registration/', views.RegisterView.as_view(), name='registration'),
+
+    # Регистрация
+    path(
+        'auth/registration/',
+        CreateView.as_view(
+            template_name='registration/registration_form.html',
+            form_class=UserCreationForm,
+            success_url=reverse_lazy('blog:index'),
+        ),
+        name='registration',
+    ),
 ]
 
-# Раздача медиа-файлов только в режиме отладки
+# Раздача картинок в режиме разработки
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
