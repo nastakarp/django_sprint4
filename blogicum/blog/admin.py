@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import Post, Category, Location, Comment
 
-# Регистрируем модели в админке
 admin.site.register(Category)
 admin.site.register(Location)
 admin.site.register(Comment)

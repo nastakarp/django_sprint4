@@ -63,8 +63,6 @@ class Post(models.Model):
         help_text='Снимите галочку, чтобы скрыть публикацию.'
     )
     created_at = models.DateTimeField('Добавлено', auto_now_add=True)
-
-    # НОВОЕ ПОЛЕ: Картинка
     image = models.ImageField('Изображение', upload_to='post_images', blank=True)
 
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор Автор', related_name='posts')
@@ -82,7 +80,6 @@ class Post(models.Model):
         return self.title
 
 
-# НОВАЯ МОДЕЛЬ: Комментарии
 class Comment(models.Model):
     text = models.TextField('Текст комментария')
     post = models.ForeignKey(

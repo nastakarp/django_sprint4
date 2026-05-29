@@ -16,8 +16,6 @@ from .forms import PostForm, CommentForm, UserForm
 User = get_user_model()
 
 
-# --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ И МИКСИНЫ ---
-
 def get_base_queryset():
     """Базовый запрос: посты с комментариями, отсортированные по дате."""
     return Post.objects.select_related(
@@ -42,7 +40,6 @@ class AuthorRequiredMixin(UserPassesTestMixin):
         return obj.author == self.request.user
 
 
-# --- ПРЕДСТАВЛЕНИЯ ДЛЯ ПОСТОВ (ГЛАВНАЯ И КАТЕГОРИИ) ---
 
 class IndexListView(ListView):
     """Главная страница."""
@@ -72,7 +69,6 @@ class CategoryPostsView(ListView):
         return context
 
 
-# --- ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ ---
 
 class ProfileView(ListView):
     """Профиль пользователя."""
@@ -117,11 +113,8 @@ class PostDetailView(DetailView):
         return get_base_queryset()
 
     def get_object(self, queryset=None):
-        # Получаем пост по ID
         obj = super().get_object(queryset)
-        # Если пост не опубликован, либо категория скрыта, либо время публикации еще не пришло:
         if not obj.is_published or not obj.category.is_published or obj.pub_date > timezone.now():
-            # Доступ к такому посту имеет ТОЛЬКО его автор
             if obj.author != self.request.user:
                 raise Http404("Пост не найден")
         return obj
@@ -155,7 +148,6 @@ class PostUpdateView(LoginRequiredMixin, AuthorRequiredMixin, UpdateView):
     pk_url_kwarg = 'post_id'
 
     def handle_no_permission(self):
-        # Перенаправляем не-автора на страницу поста
         return redirect('blog:post_detail', post_id=self.kwargs['post_id'])
 
     def get_success_url(self):
@@ -170,7 +162,6 @@ class PostDeleteView(LoginRequiredMixin, AuthorRequiredMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Отправляем форму в контекст, чтобы шаблон мог ее отрисовать для подтверждения
         context['form'] = PostForm(instance=self.object)
         return context
 
@@ -178,7 +169,6 @@ class PostDeleteView(LoginRequiredMixin, AuthorRequiredMixin, DeleteView):
         return reverse('blog:profile', kwargs={'username': self.request.user.username})
 
 
-# --- CRUD ДЛЯ КОММЕНТАРИЕВ ---
 
 class CommentCreateView(LoginRequiredMixin, CreateView):
     """Добавление комментария."""

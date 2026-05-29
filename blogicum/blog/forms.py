@@ -7,7 +7,6 @@ User = get_user_model()
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        # Исключаем поля автора и даты создания, их мы заполним автоматически
         exclude = ('author', 'created_at')
         widgets = {
             'pub_date': forms.DateTimeInput(format='%Y-%m-%dT%H:%M', attrs={'type': 'datetime-local'})

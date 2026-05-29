@@ -6,7 +6,6 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 
-# Кастомные обработчики ошибок
 handler404 = 'pages.views.page_not_found'
 handler500 = 'pages.views.server_error'
 CSRF_FAILURE_VIEW = 'pages.views.csrf_failure'
@@ -16,10 +15,8 @@ urlpatterns = [
     path('', include('blog.urls', namespace='blog')),
     path('pages/', include('pages.urls', namespace='pages')),
 
-    # Авторизация из коробки
     path('auth/', include('django.contrib.auth.urls')),
 
-    # Регистрация
     path(
         'auth/registration/',
         CreateView.as_view(
@@ -31,6 +28,5 @@ urlpatterns = [
     ),
 ]
 
-# Раздача картинок в режиме разработки
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
